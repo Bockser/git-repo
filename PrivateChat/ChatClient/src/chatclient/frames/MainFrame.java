@@ -3,10 +3,6 @@ package chatclient.frames;
 import javax.swing.*;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 import static chatclient.helpers.ChatConstans.MAIN_FRAME_ID;
 import static chatclient.helpers.ChatConstans.SETTING_FRAME_ID;
@@ -17,6 +13,8 @@ import static chatclient.helpers.ChatConstans.SETTING_FRAME_ID;
 public class MainFrame extends AbstractFrame {
 
     private final String FRAME_TITLE = "Private Chat v0.1";
+
+    JTextArea log = new JTextArea();
 
     public MainFrame(FrameManager manager) {
         super(manager, MAIN_FRAME_ID);
@@ -40,25 +38,24 @@ public class MainFrame extends AbstractFrame {
         serverMenu.add(startServer);
         serverMenu.add(stopServer);
         serverMenu.add(settingServer);
-        settingServer.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                manager.showFrame(SETTING_FRAME_ID);
-            }
-        });
+        settingServer.addActionListener(e -> manager.showFrame(SETTING_FRAME_ID));
 
-        exitServer.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                manager.exit();
-            }
-        });
+        exitServer.addActionListener(e -> manager.exit());
         serverMenu.add(exitServer);
-
-
         menuBar.add(serverMenu);
 
+
         add(BorderLayout.NORTH, menuBar);
+        log.setAutoscrolls(true);
+        log.setEditable(false);
+        log.setSize(500, 500-menuBar.getHeight());
+        add(BorderLayout.CENTER, log);
         setVisible(false);
+
+        log.append("log string 1\n");
+        log.append("log string 2\n");
+        log.append("log string 3\n");
+        log.append("log string 4\n");
+        log.append("log string 5\n");
     }
 }
