@@ -123,7 +123,15 @@ public class PrivateChatServer implements FrameManager{
         class ConnectionHandler extends Thread{
 
             public ConnectionHandler(final int sessionID, Socket connection) {
+                this.sessionID = sessionID;
+                this.connection = connection;
+                setDaemon(true);
+                this.start();
+            }
 
+            @Override
+            public void run() {
+                mainFrame.addLog("New connection");
             }
 
         }
