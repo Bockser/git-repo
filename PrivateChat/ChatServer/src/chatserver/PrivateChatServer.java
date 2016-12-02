@@ -103,17 +103,19 @@ public class PrivateChatServer implements FrameManager{
 
         @Override
         public void run() {
-
+            int connectionCount = 0;
             try {
                 ServerSocket server = new ServerSocket(serverPort);
                 mainFrame.addLog("server start");
+
+                while (doRun == true) {
+                    new ConnectionHandler(connectionCount++, server.accept());
+                }
+                mainFrame.addLog("Server stopped");
+
             } catch (IOException e) {
-                System.out.println("ServerSocket was not open");
+                mainFrame.addLog("ServerSocket was not open");
             }
-            while (doRun == true) {
-                System.out.println("server working");
-            }
-            mainFrame.addLog("Server stopped");
         }
 
         public void stopServer () {
@@ -121,6 +123,8 @@ public class PrivateChatServer implements FrameManager{
         }
 
         class ConnectionHandler extends Thread{
+            final int sessionID;
+            Socket connection;
 
             public ConnectionHandler(final int sessionID, Socket connection) {
                 this.sessionID = sessionID;
