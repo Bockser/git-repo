@@ -1,12 +1,15 @@
 package chatserver.frames;
 
 import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
 import java.awt.*;
 import java.util.Calendar;
 import java.util.Formatter;
 import java.util.Locale;
+import java.util.Vector;
 
 import static chatserver.helpers.ChatConstans.MAIN_FRAME_ID;
 import static chatserver.helpers.ChatConstans.SETTING_FRAME_ID;
@@ -21,11 +24,9 @@ public class MainFrame extends AbstractFrame {
     private JTextArea log = new JTextArea();
     private String[] columnNames = {"sessionID", "userName", "userAdress", "sessionTime"};
     private String[][] data= {
-            {"1", "I am", "localhost", "1000"},
-            {"1", "I am", "localhost", "1000"},
-            {"1", "I am", "localhost", "1000"},
             {"1", "I am", "localhost", "1000"}};
 
+    DefaultTableModel myModel;
     private JTable tableInfo;
 
 
@@ -73,16 +74,25 @@ public class MainFrame extends AbstractFrame {
 
     private void initTableInfo() {
 
-        tableInfo = new JTable(data, columnNames);
+        Vector<String> headerTable = new Vector<>();
+
+        headerTable.add(columnNames[0]);
+        headerTable.add(columnNames[1]);
+        headerTable.add(columnNames[2]);
+        headerTable.add(columnNames[3]);
+        myModel = new DefaultTableModel(headerTable, 0);
+        tableInfo = new JTable();
+        tableInfo.setModel(myModel);
         tableInfo.setShowGrid(false);
         JScrollPane tableScroll = new JScrollPane(tableInfo);
         add(BorderLayout.WEST, tableScroll);
     }
 
     private void initLog() {
+        JScrollPane scrollLog = new JScrollPane(log);
         log.setAutoscrolls(true);
         log.setEditable(false);
-        add(BorderLayout.CENTER, log);
+        add(BorderLayout.CENTER, scrollLog);
         addLog("Application was start\n");
     }
 
@@ -94,8 +104,17 @@ public class MainFrame extends AbstractFrame {
      }
     public void addLog(String s) {
         appendDate();
-        log.append(s);
-        log.append("\n");
+        log.append(s+"\n");
+    }
+
+    public void addConnectionInfo(String[] connectionInfo) {
+        Vector<String> newRow = new Vector<>();
+        newRow.add(connectionInfo[0]);
+        newRow.add(connectionInfo[1]);
+        newRow.add(connectionInfo[2]);
+        newRow.add(connectionInfo[3]);
+        myModel.getDataVector().add(newRow);
+        myModel.newRowsAdded(new TableModelEvent(myModel));
     }
 
 }
