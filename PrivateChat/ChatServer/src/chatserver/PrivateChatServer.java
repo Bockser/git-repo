@@ -7,9 +7,13 @@ import chatserver.frames.MainFrame;
 import chatserver.frames.SettingFrame;
 
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.util.ArrayList;
+import java.io.InputStreamReader;
 
 import static chatserver.helpers.ChatConstans.*;
 
@@ -97,6 +101,8 @@ public class PrivateChatServer implements FrameManager{
     public class ConnectionListener extends Thread{
 
         private boolean doRun = true;
+        private ServerSocket server;
+        private ArrayList<ConnectionHandler> listOfConnection = new ArrayList();
         private ConnectionListener() {
             setDaemon(true);
         }
@@ -105,17 +111,27 @@ public class PrivateChatServer implements FrameManager{
         public void run() {
             int connectionCount = 0;
             try {
-                ServerSocket server = new ServerSocket(serverPort);
+                server = new ServerSocket(serverPort);
+                server.setSoTimeout(3000);
                 mainFrame.addLog("server start");
-
                 while (doRun == true) {
-                    new ConnectionHandler(connectionCount++, server.accept());
-                }
-                mainFrame.addLog("Server stopped");
+                    try {
+                        listOfConnection.add(new ConnectionHandler(connectionCount++, server.accept()));
+                    } catch (SocketTimeoutException e) {
 
+                    }
+                }
+                server.close();
+                mainFrame.addLog("Server stopped");
             } catch (IOException e) {
                 mainFrame.addLog("ServerSocket was not open");
             }
+            try {
+                server.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            mainFrame.addLog("End");
         }
 
         public void stopServer () {
@@ -135,7 +151,16 @@ public class PrivateChatServer implements FrameManager{
 
             @Override
             public void run() {
+                String[] info = {Integer.toString(sessionID), "unsupported", connection.getInetAddress().toString(), "0"};
                 mainFrame.addLog("New connection");
+                try {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    mainFrame.addLog(in.readLine());
+                } catch (IOException e) {
+
+                    e.printStackTrace();
+                }
+                mainFrame.addConnectionInfo(info);
             }
 
         }
