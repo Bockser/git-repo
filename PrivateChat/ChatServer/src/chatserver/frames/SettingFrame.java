@@ -1,8 +1,6 @@
-package chatclient.frames;
+package chatserver.frames;
 
-import javax.swing.*;
-
-import static chatclient.helpers.ChatConstans.*;
+import static chatserver.helpers.ChatConstans.*;
 
 /**
  * Created by Администратор on 01.12.2016.

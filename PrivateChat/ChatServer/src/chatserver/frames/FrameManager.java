@@ -1,4 +1,4 @@
-package chatclient.frames;
+package chatserver.frames;
 
 /**
  * Created by Администратор on 01.12.2016.
@@ -12,4 +12,8 @@ public interface FrameManager {
     AbstractFrame getFrame(int frameID);
 
     void exit();
+
+    void startServer();
+
+    void stopServer();
 }
