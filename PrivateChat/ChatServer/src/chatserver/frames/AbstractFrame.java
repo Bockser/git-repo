@@ -9,9 +9,9 @@ import javax.swing.*;
 public abstract class AbstractFrame extends JFrame{
 
     private final int frameID;
-    protected final FrameManager manager;
+    protected final ServerManager manager;
 
-    public AbstractFrame(final FrameManager manager, final int frameID) {
+    public AbstractFrame(final ServerManager manager, final int frameID) {
         super();
         this.manager = manager;
         this.frameID = frameID;
