@@ -10,4 +10,10 @@ public final class ChatConstans {
     public static final int SETTING_FRAME_ID = 1;
 
     public static final int DEFAULT_PORT = 12321;
+
+
+    //SERVER COMMAND
+    public static final String AUTH_COMMAND = "AUTH";
+    public static final String REG_COMMAND = "REG";
+
 }
