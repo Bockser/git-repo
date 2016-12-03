@@ -3,7 +3,7 @@ package chatserver.frames;
 import javax.swing.*;
 import javax.swing.event.TableModelEvent;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
+
 
 import java.awt.*;
 import java.util.Calendar;
@@ -19,6 +19,7 @@ import static chatserver.helpers.ChatConstans.SETTING_FRAME_ID;
  */
 public class MainFrame extends AbstractFrame {
 
+    private static MainFrame instance = null;
     private final String FRAME_TITLE = "Private Chat v0.1";
 
     private JTextArea log = new JTextArea();
@@ -29,8 +30,21 @@ public class MainFrame extends AbstractFrame {
     DefaultTableModel myModel;
     private JTable tableInfo;
 
+    public static void initInstance(ServerManager manager) {
+        instance = new MainFrame(manager);
+    }
 
-    public MainFrame(FrameManager manager) {
+    public static MainFrame getInstance() {
+        try {
+            if (instance == null) throw new NullPointerException();
+        } catch (NullPointerException ex) {
+            ex.toString();
+            System.err.println("Instance must be initialize by metod initInstance(ServerManager manager)");
+        }
+        return instance;
+    }
+
+    private MainFrame(ServerManager manager) {
         super(manager, MAIN_FRAME_ID);
 
         setTitle(FRAME_TITLE);
