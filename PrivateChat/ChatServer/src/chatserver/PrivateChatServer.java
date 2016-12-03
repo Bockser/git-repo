@@ -116,7 +116,8 @@ public class PrivateChatServer implements FrameManager{
                 mainFrame.addLog("server start");
                 while (doRun == true) {
                     try {
-                        listOfConnection.add(new ConnectionHandler(connectionCount++, server.accept()));
+                        listOfConnection.add(new ConnectionHandler(connectionCount, server.accept()));
+                        connectionCount++;
                     } catch (SocketTimeoutException e) {
 
                     }
@@ -131,7 +132,6 @@ public class PrivateChatServer implements FrameManager{
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            mainFrame.addLog("End");
         }
 
         public void stopServer () {
@@ -153,6 +153,7 @@ public class PrivateChatServer implements FrameManager{
             public void run() {
                 String[] info = {Integer.toString(sessionID), "unsupported", connection.getInetAddress().toString(), "0"};
                 mainFrame.addLog("New connection");
+
                 try {
                     BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                     mainFrame.addLog(in.readLine());
