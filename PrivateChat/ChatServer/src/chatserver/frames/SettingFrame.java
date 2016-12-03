@@ -1,12 +1,15 @@
 package chatserver.frames;
 
+import javax.swing.*;
+
 import static chatserver.helpers.ChatConstans.*;
 
 /**
  * Created by Администратор on 01.12.2016.
  */
-public class SettingFrame extends AbstractFrame{
+public class SettingFrame extends JDialog{
 
+    protected final ServerManager manager;
     private static SettingFrame instance = null;
 
     private static final String FRAME_TITLE = "Setting";
@@ -26,8 +29,10 @@ public class SettingFrame extends AbstractFrame{
     }
 
     private SettingFrame(ServerManager manager) {
-        super(manager, MAIN_FRAME_ID);
-        setTitle(FRAME_TITLE);
+        super(MainFrame.getInstance(), FRAME_TITLE, true);
+        this.manager = manager;
+        setSize(400, 400);
+        setLocation(getOwner().getX(), getOwner().getY() );
         setVisible(false);
     }
 }

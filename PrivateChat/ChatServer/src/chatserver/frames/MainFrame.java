@@ -17,7 +17,10 @@ import static chatserver.helpers.ChatConstans.SETTING_FRAME_ID;
 /**
  * Created by Администратор on 01.12.2016.
  */
-public class MainFrame extends AbstractFrame {
+public class MainFrame extends JFrame {
+
+
+    private final ServerManager manager;
 
     private static MainFrame instance = null;
     private final String FRAME_TITLE = "Private Chat v0.1";
@@ -45,8 +48,7 @@ public class MainFrame extends AbstractFrame {
     }
 
     private MainFrame(ServerManager manager) {
-        super(manager, MAIN_FRAME_ID);
-
+        this.manager = manager;
         setTitle(FRAME_TITLE);
         setResizable(false);
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
