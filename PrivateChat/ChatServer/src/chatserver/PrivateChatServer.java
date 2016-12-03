@@ -26,6 +26,7 @@ public class PrivateChatServer implements ServerManager, Runnable{
     private int serverPort = DEFAULT_PORT;
     private boolean doRun = false;
 
+    int connectionCount;
     private ServerSocket server = null;
     private List<Connection> connections = Collections.synchronizedList(new ArrayList<Connection>());
 
@@ -45,7 +46,7 @@ public class PrivateChatServer implements ServerManager, Runnable{
 
     @Override
     public void run() {
-        int connectionCount = 0;
+        connectionCount = 0;
         doRun = true;
         try {
             server = new ServerSocket(serverPort);
@@ -126,9 +127,12 @@ public class PrivateChatServer implements ServerManager, Runnable{
 
     @Override
     public void stopServer() {
-        mainFrame.addLog("Stopping server");
-        doRun = false;
-
+        if (!doRun)
+            mainFrame.addLog("Error: Server is not running");
+        else {
+            mainFrame.addLog("Stopping server");
+            doRun = false;
+        }
     }
 
 
@@ -151,10 +155,26 @@ public class PrivateChatServer implements ServerManager, Runnable{
 
         @Override
         public void run() {
-            String[] info = {Integer.toString(sessionID), "unsupported", connection.getInetAddress().toString(), "0"};
-            mainFrame.addLog("New connection");
+            //String[] info = {Integer.toString(sessionID), "unsupported", connection.getInetAddress().toString(), "0"};
+            try {
+                switch (in.readLine()) {
+                    case AUTH_COMMAND:
+                        mainFrame.addLog("Authentication new connection from:" + connection.getInetAddress().toString());
+                        break;
+                    case REG_COMMAND:
+                        mainFrame.addLog("Registration for new connection from: "  + connection.getInetAddress().toString());
+                        break;
+                    default:
+                        mainFrame.addLog("Error command from: "  + connection.getInetAddress().toString());
+                        break;
+                }
 
-            mainFrame.addConnectionInfo(info);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                mainFrame.addLog("Connection id" + sessionID + " is closing");
+                close();
+            }
         }
 
         public void close() {
@@ -162,6 +182,7 @@ public class PrivateChatServer implements ServerManager, Runnable{
                 connection.close();
                 in.close();
                 out.close();
+                connectionCount--;
             } catch (IOException e) {
                 e.printStackTrace();
             }
