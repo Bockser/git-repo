@@ -5,6 +5,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.awt.event.WindowListener;
 
 /**
  * Created by Администратор on 02.12.2016.
@@ -73,4 +74,12 @@ public class MainFrame extends JFrame {
 
 
     }
+
+    public void showPublicMessage(String seller, String message) {
+    }
+
+    public void showPrivateMessage(String seller, String message) {
+    }
+
+
 }
