@@ -142,6 +142,8 @@ public class PrivateChatServer implements ServerManager, Runnable{
         Socket connection;
         private BufferedReader in;
         private PrintWriter out;
+        private String name = "";
+        private boolean exit = false;
 
         public Connection(final int sessionID, Socket connection) {
             this.sessionID = sessionID;
@@ -155,11 +157,16 @@ public class PrivateChatServer implements ServerManager, Runnable{
 
         @Override
         public void run() {
-            //String[] info = {Integer.toString(sessionID), "unsupported", connection.getInetAddress().toString(), "0"};
             try {
-                switch (in.readLine()) {
+                String c = in.readLine();
+                System.out.println(c);
+                String[] command = c.split("|");
+                System.out.println(command[0]);
+                switch (command[0]) {
                     case AUTH_COMMAND:
                         mainFrame.addLog("Authentication new connection from:" + connection.getInetAddress().toString());
+                        if (authentication(command[1]))
+                            chatHandler();
                         break;
                     case REG_COMMAND:
                         mainFrame.addLog("Registration for new connection from: "  + connection.getInetAddress().toString());
@@ -177,8 +184,34 @@ public class PrivateChatServer implements ServerManager, Runnable{
             }
         }
 
+        private boolean authentication(String s) throws IOException{
+            String[] info = {Integer.toString(sessionID), name, connection.getInetAddress().toString(), "0"};
+            mainFrame.addConnectionInfo(info);
+            out.println();
+            return true;
+        }
+
+
+        private void chatHandler() {
+            out.println(PUBLIC_MESSAGE + "|" + "Server administaror" + "User " + name + " enter to chat");
+            try {
+                while (!exit) {
+                    String[] command = in.readLine().split("|");
+                    switch (command[0]) {
+                        case PUBLIC_MESSAGE:
+                            break;
+                        case PRIVATE_MESSAGE:
+                            break;
+                        case EXIT_COMMAND:
+                            break;
+                    }
+                }
+            } catch (IOException ex) {}
+        }
+
         public void close() {
             try {
+                exit = true;
                 connection.close();
                 in.close();
                 out.close();
