@@ -16,7 +16,7 @@ import java.text.ParseException;
 /**
  * Created by Bockser on 03.12.2016.
  */
-public class LogonFrame extends JFrame implements ChangeListener {
+public class LogonFrame extends JFrame {
 
     private ChatClient cahtClient;
 
@@ -27,7 +27,8 @@ public class LogonFrame extends JFrame implements ChangeListener {
     private final int FRM_WIDTH = 400;
     private final int FRM_HEIGHT = 600;
 
-    JFormattedTextField addressHost;
+    private GridBagConstraints c;
+    private JFormattedTextField addressHost;
 
     public LogonFrame(ChatClient cahtClient) {
         this.cahtClient = cahtClient;
@@ -41,7 +42,7 @@ public class LogonFrame extends JFrame implements ChangeListener {
 
         Font font = new Font("Arial",0 , 32);
         setLayout(new GridBagLayout());
-        GridBagConstraints c = new GridBagConstraints();
+        c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
         Border labelBorder = new EmptyBorder(0, 20, 0 , 0);
         JLabel caption = new JLabel("Wellcome!");
@@ -178,7 +179,7 @@ public class LogonFrame extends JFrame implements ChangeListener {
                 try {
                     cahtClient.connect(InetAddress.getByName(addressHost.getText()), tfLogin.getText());
                 } catch (UnknownHostException e1) {
-                    e1.printStackTrace();
+                    System.err.println("Host not entered");
                 }
             }
         });
@@ -190,24 +191,13 @@ public class LogonFrame extends JFrame implements ChangeListener {
         c.gridwidth = 2;
         add(btnConnect, c);
 
-        //pack();
-        /*JLabel enterHost = new JLabel("Enter address server:");
-        caption.setBorder( new EmptyBorder(0, 20,0, 0));
-        enterHost.setHorizontalAlignment(SwingConstants.LEFT);
-        c.weightx = 1;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridx = 0;
-        c.gridy = 1;
-        c.gridwidth = 1;
-        add(enterHost, c);*/
-
-
     }
 
     private JTextField serverAdress;
 
-    @Override
-    public void stateChanged(ChangeEvent e) {
 
+    public void showFrame(boolean connectionError) {
+        System.err.println("Connection error!");
+        setVisible(true);
     }
 }
