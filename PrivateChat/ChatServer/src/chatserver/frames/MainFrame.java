@@ -133,4 +133,12 @@ public class MainFrame extends JFrame {
         myModel.newRowsAdded(new TableModelEvent(myModel));
     }
 
+    public void removeConnectionInfo(int sessionID) {
+        for (int i = 0; i < myModel.getRowCount(); i++) {
+            if (Integer.parseInt((String)myModel.getValueAt(i, 0)) == sessionID) {
+                myModel.removeRow(i);
+                break;
+            }
+        }
+    }
 }
