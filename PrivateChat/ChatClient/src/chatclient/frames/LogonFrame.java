@@ -38,7 +38,6 @@ public class LogonFrame extends JFrame {
         setVisible(true);
         setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        //setLayout(new BorderLayout(50,50));
 
         Font font = new Font("Arial",0 , 32);
         setLayout(new GridBagLayout());
