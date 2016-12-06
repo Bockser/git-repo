@@ -138,8 +138,8 @@ public class PrivateChatServer implements ServerManager, Runnable{
 
     class Connection extends Thread{
 
-        final int sessionID;
-        Socket connection;
+        private final int sessionID;
+        private Socket connection;
         private BufferedReader in;
         private PrintWriter out;
         private String name = "";
@@ -158,14 +158,11 @@ public class PrivateChatServer implements ServerManager, Runnable{
         @Override
         public void run() {
             try {
-                String c = in.readLine();
-                System.out.println(c);
-                String[] command = c.split("|");
-                System.out.println(command[0]);
-                switch (command[0]) {
+                String command = in.readLine();
+                switch (command) {
                     case AUTH_COMMAND:
                         mainFrame.addLog("Authentication new connection from:" + connection.getInetAddress().toString());
-                        if (authentication(command[1]))
+                        if (authentication(in.readLine()))
                             chatHandler();
                         break;
                     case REG_COMMAND:
@@ -180,11 +177,13 @@ public class PrivateChatServer implements ServerManager, Runnable{
                 e.printStackTrace();
             } finally {
                 mainFrame.addLog("Connection id" + sessionID + " is closing");
+                mainFrame.removeConnectionInfo(sessionID);
                 close();
             }
         }
 
-        private boolean authentication(String s) throws IOException{
+        private boolean authentication(String name) throws IOException{
+            this.name = name;
             String[] info = {Integer.toString(sessionID), name, connection.getInetAddress().toString(), "0"};
             mainFrame.addConnectionInfo(info);
             out.println();
@@ -193,20 +192,57 @@ public class PrivateChatServer implements ServerManager, Runnable{
 
 
         private void chatHandler() {
-            out.println(PUBLIC_MESSAGE + "|" + "Server administaror" + "User " + name + " enter to chat");
+
             try {
+                synchronized (connection) {
+                    Iterator<Connection> iter = connections.iterator();
+                    while (iter.hasNext()) {
+                        iter.next().sendPublicMessage("Chat server", name + " enter to chat");
+                    }
+                }
                 while (!exit) {
-                    String[] command = in.readLine().split("|");
-                    switch (command[0]) {
+                    String command = in.readLine();
+                    switch (command) {
                         case PUBLIC_MESSAGE:
+                            String senderPub = in.readLine();
+                            String messagePub = in.readLine();
+                            synchronized (connections) {
+                                Iterator<Connection>  iter = connections.iterator();
+                                while (iter.hasNext()) {
+                                    iter.next().sendPublicMessage(senderPub, messagePub);
+                                }
+                            }
                             break;
                         case PRIVATE_MESSAGE:
+                            String senderPri = in.readLine();
+                            String addressePri = in.readLine();
+                            String messagePri = in.readLine();
+                            synchronized (connections) {
+                                Iterator<Connection>  iter = connections.iterator();
+                                while (iter.hasNext()) {
+                                    if (iter.next().name == addressePri)
+                                        sendPrivateMessage(senderPri, messagePri);
+                                }
+                            }
                             break;
                         case EXIT_COMMAND:
+                            exit = true;
                             break;
                     }
                 }
             } catch (IOException ex) {}
+        }
+
+        private void sendPrivateMessage(String sender, String message) {
+            out.println(PRIVATE_MESSAGE);
+            out.println(sender);
+            out.println(message);
+        }
+
+        private void sendPublicMessage(String sender, String message) {
+            out.println(PUBLIC_MESSAGE);
+            out.println(sender);
+            out.println(message);
         }
 
         public void close() {
@@ -215,7 +251,6 @@ public class PrivateChatServer implements ServerManager, Runnable{
                 connection.close();
                 in.close();
                 out.close();
-                connectionCount--;
             } catch (IOException e) {
                 e.printStackTrace();
             }
