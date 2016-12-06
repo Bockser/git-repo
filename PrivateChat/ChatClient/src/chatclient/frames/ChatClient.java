@@ -8,4 +8,13 @@ import java.net.InetAddress;
 public interface ChatClient {
 
     void connect(InetAddress host, String Username);
+
+    void disconnect();
+
+    String[] getUserList();
+
+    void sendPublicMessage(String message);
+
+    void sendPrivateMessage(String addressee, String message);
+
 }
