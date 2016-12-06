@@ -42,20 +42,15 @@ public class PrivateChat implements ChatClient, Runnable{
         new PrivateChat();
     }
 
-    public void connect() {
-        Thread client = new Thread(this);
-        client.start();
-    }
-
     @Override
     public void run() {
         Socket s = null;
         try {
             s = new Socket(host, 12321);
             out = new PrintWriter(s.getOutputStream(), true);
-            System.out.println(AUTH_COMMAND + "|" + name);
-            out.println(AUTH_COMMAND + "|" + name);
-            while (!exitClient) {}
+            out.println(AUTH_COMMAND);
+            out.println(name);
+            while (!exitClient) { }
         } catch (IOException e) {
             logonFrame.showFrame(true);
             mainFrame.setVisible(false);
@@ -83,6 +78,31 @@ public class PrivateChat implements ChatClient, Runnable{
         chat.start();
     }
 
+    @Override
+    public void disconnect() {
+
+    }
+
+    @Override
+    public String[] getUserList() {
+        return new String[0];
+    }
+
+    @Override
+    public void sendPublicMessage(String message) {
+        out.println(PUBLIC_MESSAGE);
+        out.println(name);
+        out.println(message);
+    }
+
+    @Override
+    public void sendPrivateMessage(String addressee, String message) {
+        out.println(PRIVATE_MESSAGE);
+        out.println(name);
+        out.println(addressee);
+        out.println(message);
+    }
+
     private class Resender extends Thread {
 
         private boolean stop = false;
@@ -96,22 +116,26 @@ public class PrivateChat implements ChatClient, Runnable{
 
             try {
                 while (!stop) {
-                    String[] command = in.readLine().split("|");
-                    switch (command[0]) {
-                        case PUBLIC_MESSAGE:
-                            mainFrame.showPublicMessage(command[1], command[2]);
-                            break;
-                        case PRIVATE_MESSAGE:
-                            mainFrame.showPrivateMessage(command[1], command[2]);
-                            break;
-                        default:
-                            break;
-                    }
-
+                    waitCommand();
                 }
 
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        }
+
+        private void waitCommand() throws IOException {
+            String command = in.readLine();
+            String name = in.readLine();
+            String message = in.readLine();
+            switch (command) {
+                case PUBLIC_MESSAGE:
+                    mainFrame.displayPublicMessage(name, message);
+                    break;
+                case PRIVATE_MESSAGE:
+                    mainFrame.displayPrivateMessage(name, message);
+                default:
+                    break;
             }
         }
     }
