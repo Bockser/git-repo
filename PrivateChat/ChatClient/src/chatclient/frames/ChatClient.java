@@ -13,8 +13,12 @@ public interface ChatClient {
 
     String[] getUserList();
 
+    String getMyName();
+
     void sendPublicMessage(String message);
 
     void sendPrivateMessage(String addressee, String message);
+
+    void sendCommand(String command, String args[]);
 
 }
