@@ -27,10 +27,7 @@ public class MainFrame extends JFrame {
 
     private JTextArea log = new JTextArea();
     private String[] columnNames = {"sessionID", "userName", "userAdress", "sessionTime"};
-    private String[][] data= {
-            {"1", "I am", "localhost", "1000"}};
-
-    DefaultTableModel myModel;
+    private DefaultTableModel myModel;
     private JTable tableInfo;
 
     public static void initInstance(ServerManager manager) {
