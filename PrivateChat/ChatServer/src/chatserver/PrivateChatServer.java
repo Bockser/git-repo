@@ -186,7 +186,6 @@ public class PrivateChatServer implements ServerManager, Runnable{
             this.name = name;
             String[] info = {Integer.toString(sessionID), name, connection.getInetAddress().toString(), "0"};
             mainFrame.addConnectionInfo(info);
-            out.println();
             return true;
         }
 
@@ -214,14 +213,17 @@ public class PrivateChatServer implements ServerManager, Runnable{
                             }
                             break;
                         case PRIVATE_MESSAGE:
-                            String senderPri = in.readLine();
+
                             String addressePri = in.readLine();
                             String messagePri = in.readLine();
                             synchronized (connections) {
                                 Iterator<Connection>  iter = connections.iterator();
                                 while (iter.hasNext()) {
-                                    if (iter.next().name == addressePri)
-                                        sendPrivateMessage(senderPri, messagePri);
+                                    Connection tempConnection = iter.next();
+                                    if (tempConnection.name.equals(addressePri)) {
+                                        tempConnection.sendPrivateMessage(name, messagePri);
+                                    }
+
                                 }
                             }
                             break;
