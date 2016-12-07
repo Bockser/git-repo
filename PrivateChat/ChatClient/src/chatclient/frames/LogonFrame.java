@@ -35,7 +35,7 @@ public class LogonFrame extends JFrame {
         setTitle(FRM_TITLE);
         setLocation(FRM_LOC_X, FRM_LOC_Y);
         setSize(FRM_WIDTH, FRM_HEIGHT);
-        setVisible(true);
+        setVisible(false);
         setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -190,6 +190,7 @@ public class LogonFrame extends JFrame {
         c.gridwidth = 2;
         add(btnConnect, c);
 
+        repaint();
     }
 
     private JTextField serverAdress;
