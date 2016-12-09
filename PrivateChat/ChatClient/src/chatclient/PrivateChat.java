@@ -6,10 +6,8 @@ import chatclient.frames.ChatClient;
 import chatclient.frames.LogonFrame;
 import chatclient.frames.MainFrame;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
+import java.lang.reflect.Array;
 import java.net.InetAddress;
 import java.net.Socket;
 
@@ -43,16 +41,47 @@ public class PrivateChat implements ChatClient, Runnable{
     @Override
     public void run() {
         Socket s = null;
+        Resender resender = null;
         try {
             s = new Socket(host, 12321);
             in = new BufferedReader(new InputStreamReader(s.getInputStream()));
             out = new PrintWriter(s.getOutputStream(), true);
             out.println(AUTH_COMMAND);
             out.println(name);
-            Resender resender = new Resender();
+            switch (in.readLine()) {
+                case COMMAND_SUCCESS:
+                    ObjectInputStream objIn = new ObjectInputStream(s.getInputStream());
+                    try {
+                        String[] users = (String[])  objIn.readObject();
+                        System.out.println(users.length);
+                        /*for (String user: users)
+                            System.out.println(user);*/
+                        mainFrame.updateUsersList(users);
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case COMMAND_FAILED:
+                    break;
+                default:
+                    break;
+            }
+
+            resender = new Resender();
             resender.start();
             while (!exitClient) { }
         } catch (IOException e) {
+            try {
+                if (s != null) {
+                    s.close();
+                    in.close();
+                    out.close();
+                }
+                if (resender != null)
+                    resender.setStop(true);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
             logonFrame.showFrame(true);
             mainFrame.setVisible(false);
         }
@@ -116,6 +145,10 @@ public class PrivateChat implements ChatClient, Runnable{
     private class Resender extends Thread {
 
         private boolean stop = false;
+
+        public Resender() {
+            setDaemon(true);
+        }
 
         public void setStop(boolean stop) {
             this.stop = stop;

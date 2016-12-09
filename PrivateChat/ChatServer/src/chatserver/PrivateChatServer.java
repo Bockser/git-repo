@@ -4,14 +4,11 @@ import chatserver.frames.MainFrame;
 import chatserver.frames.ServerManager;
 import chatserver.frames.SettingFrame;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.*;
-import java.io.InputStreamReader;
 
 import static chatserver.helpers.ChatConstans.*;
 
@@ -185,6 +182,19 @@ public class PrivateChatServer implements ServerManager, Runnable{
         private boolean authentication(String name) throws IOException{
             this.name = name;
             String[] info = {Integer.toString(sessionID), name, connection.getInetAddress().toString(), "0"};
+            System.out.println("I am here");
+            out.println(COMMAND_SUCCESS);
+            ObjectOutputStream objOut= new ObjectOutputStream(connection.getOutputStream());
+            String[] users = new String[connections.size()];
+            int i = 0;
+            synchronized (connections) {
+                Iterator<Connection> iterator = connections.iterator();
+                while (iterator.hasNext()) {
+                    users[i] = iterator.next().name;
+                }
+                System.out.print(users);
+                objOut.writeObject(users);
+            }
             mainFrame.addConnectionInfo(info);
             return true;
         }
