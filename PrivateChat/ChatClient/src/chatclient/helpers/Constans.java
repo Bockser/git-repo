@@ -12,6 +12,9 @@ public final class Constans {
     public static final String REG_COMMAND = "REG";
     public static final String EXIT_COMMAND = "EXIT";
 
+    public static final String COMMAND_SUCCESS = "SUCCESS";
+    public static final String COMMAND_FAILED = "FAILED";
+
     //GENERAL COMMAND
     public static final String PUBLIC_MESSAGE = "PUBLIC";
     public static final String PRIVATE_MESSAGE = "PRIVATE";
