@@ -107,7 +107,7 @@ public class MainFrame extends JFrame {
     }
 
     private void initListUser() {
-        listOnlineUser = new JList(new String[]{"name1", "name2", "name3", "name4", "name5"});
+        listOnlineUser = new JList(new String[]{"user1", "user2", "user3"});
         listOnlineUser.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -208,5 +208,9 @@ public class MainFrame extends JFrame {
 
         //messageTabbedPane.setSelectedIndex(i);
         tempTextArea.append(sb.toString());
+    }
+
+    public void updateUsersList(String[] users) {
+        listOnlineUser.setListData(users);
     }
 }
